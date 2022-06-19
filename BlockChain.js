@@ -6,9 +6,12 @@ export default class BlockChain{
 }
     init(){
         if(this.chain.length == 0){
-            let block = new Block("hello","genisis","akjhg",Date.now(),0,0)
-            this.chain.push(Block)
+            let block = new Block("hello","Genesis",Date.now(),0,0)
+            this.chain.push(block)
             console.log(this.chain)
         }
     }
+     
 }
+
+new BlockChain()
