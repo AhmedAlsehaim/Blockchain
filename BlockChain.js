@@ -1,3 +1,4 @@
+import { sha256 } from "crypto.js";
 import Block from "./Block.js"
 export default class BlockChain{
     constructor(){
@@ -6,10 +7,9 @@ export default class BlockChain{
 }
     init(){
         if(this.chain.length == 0){
-            let block = new Block("hello","hash","Genesis",Date.now().toString(),0,10)
+            let block = new Block("Genesis","",Date.now().toString(),0)
             this.chain.push(block)
             console.log(this.chain)
-            console.log("the new nonce: " +block.nonce)
         }
     }
 
@@ -19,25 +19,28 @@ export default class BlockChain{
             return
         }
 
-        let block = new Block(data,"hash",this.chain[this.chain.length-1].getHash(),Date.now(),this.chain.length,0)
+        let nBlock = new Block(data,this.chain[this.chain.length-1].hash,Date.now(),this.chain.length)
+        this.chain.push(nBlock)
+        console.log(nBlock)
     }
 
+
     validateBlockchain(){
-        flag = true;
+        
         for (let i = 1; i < this.chain.length; i++) {
-            if(this.chain[i].previousHash!=this.chain[i-1].getHash){
-                flag = false
-                return flag
+            let curBlock = this.chain[i]
+            let prevBlock = this.chain[i-1]
+            if(curBlock.previousHash!==prevBlock.hash){
+                return false
             }
-            hashCheck = new Block().calculateHash(this.chain[i].data,this.chain[i].nonce,this.chain[i].timeStamp)
-            if(this.chain[i].getHash!=hashCheck){
-                flag = false
-                return flag
+            if(curBlock.hash!==curBlock.calculateHash()){
+                return false
             }
 
         }
-        return flag
+        console.log("Valid Chain")
+        return true
     }
 }
 
-new BlockChain()
+

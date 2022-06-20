@@ -7,43 +7,38 @@ export default class Block{
     height;
     nonce;
 
-    constructor(data, hash, previousHash, timeStamp, height, nonce){
+    constructor(data, previousHash, timeStamp, height){
+        let nonceAndHash = this.mining()
         this.data = data;
-        this.hash = hash;
-        this.hash = this.mining(data);
+        this.hash = nonceAndHash[0];
         this.previousHash =previousHash;
         this.timeStamp = timeStamp;
         this.height = height;
-        this.nonce = nonce;
+        this.nonce = nonceAndHash[1];
     }
 
-    setNonce(nNonce){
-        this.nonce = nNonce
-        console.log("the new nonce: " + this.nonce)
-    }
 calculateHash(){
-    return sha256(this.height +this.timeStamp+
-         this.data + this.previousHash).toString()
+    return sha256(this.data + this.height + this.previousHash + this.timeStamp + this.nonce).toString()
 }
 
 
-mining(nData){
+mining(){
     var nonce = 0;
     var numOfGuesses = 0;
     var difficulty = 1;
 
     console.log(this.timeStamp)
     for (let i = 0; i < 10000000; i++) { 
-        let magicHash = sha256(nData + nonce + this.timeStamp).toString()
+        let magicHash = sha256(this.data + this.height + this.previousHash + this.timeStamp + nonce).toString();
         console.log(magicHash)
         console.log(nonce)
             if (magicHash.substring(0, difficulty) == "".padStart(difficulty, "0")){
 
                 console.log("magic hash : " + magicHash)
                 console.log("we found the hash with "+numOfGuesses+" guesses")
-                console.log("Time: " + this.timeStamp)
-
-                return magicHash+this.timeStamp+nonce
+                console.log("Time: " + timeStamp)
+                
+                return [magicHash,nonce]
             }
         numOfGuesses ++; 
         nonce ++;
